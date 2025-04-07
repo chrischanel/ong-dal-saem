@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>옹달샘 수거함 쪽지 확인</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>옹달샘 수거함</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f0f4f8;
       text-align: center;
-      padding: 50px;
+      padding: 40px;
     }
     h1 {
-      color: #3a5a40;
+      color: #2c3e50;
+      font-size: 2.5em;
     }
-    input, button {
+    input {
       padding: 10px;
-      font-size: 16px;
-      margin: 10px;
+      font-size: 1.1em;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      width: 250px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 10px;
     }
     #result {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #333;
+      margin-top: 30px;
+      font-size: 1.3em;
+      color: #2c3e50;
     }
   </style>
 </head>
 <body>
-  <h1>📮 옹달샘 수거함 쪽지 확인</h1>
-  <p>학번을 입력하면 쪽지 도착 여부를 확인할 수 있어요!</p>
-  <input type="text" id="studentId" placeholder="학번 입력" />
+  <h1>옹달샘 수거함</h1>
+  <p>아래에 학번을 입력해 쪽지를 확인하세요!</p>
+  <input type="text" id="studentId" placeholder="학번 입력">
   <button onclick="checkMessage()">확인하기</button>
   <div id="result"></div>
 
@@ -38,23 +52,25 @@
       const resultDiv = document.getElementById('result');
 
       if (!studentId) {
-        resultDiv.innerText = "학번을 입력해주세요!";
+        resultDiv.innerText = '학번을 입력해주세요.';
         return;
       }
 
-      try {
-        const res = await fetch("https://script.google.com/macros/s/https://docs.google.com/spreadsheets/d/11_05T4kntGTxJo24xUet2fGOLwpykLuEREi5IstMrIE/edit?usp=sharing/exec");
-        const data = await res.json();
-        const student = data.find(d => d.studentId === studentId);
+      resultDiv.innerText = '확인 중...';
 
-        if (student) {
-          resultDiv.innerHTML = `<strong>${student.name}님</strong>, ${student.message}`;
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbzlncG7FTM0o7ep3pA3BLPyKg2p0GRp0GyThyLKkPjjq7DKpC_QE2JLCQQIRz6MD5xK/exec");
+        const data = await res.json();
+
+        const record = data.find(row => row.studentId === studentId);
+
+        if (record) {
+          resultDiv.innerText = `${record.name}님, ${record.message}`;
         } else {
-          resultDiv.innerText = "쪽지가 없습니다.";
+          resultDiv.innerText = '쪽지가 없습니다';
         }
-      } catch (err) {
-        resultDiv.innerText = "데이터를 불러오는 데 문제가 생겼어요. 다시 시도해 주세요!";
-        console.error(err);
+      } catch (e) {
+        resultDiv.innerText = '데이터를 불러오는 데 문제가 생겼어요.';
       }
     }
   </script>
